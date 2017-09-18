@@ -1,0 +1,69 @@
+%3.3.11 showing linear versus cubic convergence
+function root = Comp_3_3_11(x, tol)
+%initial approximation
+rootApprox = x; 
+cons = 1;
+%collects roots
+roots = [];
+%collects the constant terms
+consCollection = [];
+%goes through approximating root
+while (abs(cons)>tol)
+    cons = (fnot(rootApprox)/sqrt((fOne(rootApprox)^2)-fnot(rootApprox)*fTwo(rootApprox)));
+    rootApprox = rootApprox - cons; 
+    consCollection(end+1) = cons;
+    roots(end+1) = rootApprox;
+end
+%defines root as the final approximation
+root = rootApprox;
+
+%collects alsphas as they are calculated
+alphas = [];
+for i = 1:length(consCollection)-2
+    alphas(end+1) = (log(consCollection(i+2)/consCollection(i+1))/log(consCollection(i+1)/consCollection(i)));
+end
+
+
+
+%creates table
+f = figure('Position',[100, 100, 600, 800]);
+
+% create the data
+d = [];
+for i = 1:length(roots)
+    d(i,1) = roots(i);
+end
+for i = 1:length(roots)
+    if length(alphas) >= i
+        d(i,2) = alphas(i);
+    else 
+        d(i,2) = nan;
+    end
+end
+
+% Create the column and row names in cell arrays 
+cnames = {'Roots','Alphas'};
+rnames = {'1','2','3','4','5','6','7','8','9','10','11'};
+
+% Create the uitable
+t = uitable(f,'Data',d,...
+            'ColumnName',cnames,... 
+            'RowName',rnames);
+
+
+end
+
+%we test at two values (x-1)(x-2)^2, the simple root x = 1 and the multiple
+%root x = 2, where f(x) = (x-1)(x^2 -4x +4) = x^3-5x^2+8x-4
+
+function y = fnot(x)
+y = (x^3)-5*(x^2)+8*x-4;
+end
+
+function y = fOne(x)
+y = 3*(x^2)-10*(x)+8;
+end
+
+function y = fTwo(x)
+y = 6*(x)-10;
+end
